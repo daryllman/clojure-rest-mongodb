@@ -22,12 +22,13 @@ content-type: application/json
 POST {{hostname}}:{{port}}/api/get_metadatas HTTP/1.1
 content-type: application/json
 {
-    // TO BE DONE
+    "asin": "B000F83SZQ",
 }
+
 
 ###
 // CREATE - add a book
-POST {{hostname}}:{{port}}/api/create_review HTTP/1.1
+POST {{hostname}}:{{port}}/api/add_book HTTP/1.1
 content-type: application/json
 {
     "asin": "B0001234ZZ",
@@ -36,14 +37,21 @@ content-type: application/json
     "price": "9.9",
     "imUrl": "https://miro.medium.com/max/1400/1*4PrMNL-FF9Z5G5BXJliAYg.png",
     "related": {"also_bought":[], "buy_after_viewing":[]},
-    "categories": [[['Books', 'Literature & Fiction']]],
+    "categories": [['Books', 'Literature & Fiction']],
 }
 ###
 ###
 // DELETE - remove a book
-POST {{hostname}}:{{port}}/api/delete_review HTTP/1.1
+POST {{hostname}}:{{port}}/api/delete_book HTTP/1.1
 content-type: application/json
 {
     "asin": "B0001234ZZ",
+}
+###
+// READ - get the image urls of related images
+POST {{hostname}}:{{port}}/api/related_images HTTP/1.1
+content-type: application/json
+{
+    "asin_list": ["B0001234ZZ", "B0001234ZZ"]
 }
 ###
