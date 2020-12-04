@@ -2,10 +2,8 @@
   (:require
    [clojure-rest-mongodb.metadata.model :refer [read-metadatas
                                                 read-book
-                                                         ;create-review
-                                                         ;read-reviews
-                                                         ;delete-a-review
-                                                ]]
+                                                create-book
+                                                delete-book]]
    [ring.util.response :refer [response]]
    [clojure.data.json :as json])
   (:require [monger.core :as mg]
@@ -26,7 +24,8 @@
   (let [db (:clojure-rest-mongodb/db req)
         skipNum (get-in req [:params "skip"])
         limitNum (get-in req [:params "limit"])
-        metadatas (read-metadatas db skipNum limitNum)]
+        category (get-in req [:params "category"])
+        metadatas (read-metadatas db skipNum limitNum category)]
     {:body  (list (json/write-str (response metadatas)))}))
 
 
@@ -38,8 +37,19 @@
     {:body  (list (json/write-str (response metadata)))}))
 
 ; handle-create-book <- create-book
+(defn handle-create-book [req]
+  (let [db (:clojure-rest-mongodb/db req)
+        asin (get-in req [:params "asin"])
+        metadata (create-book db asin)]
+    {:body  (list (json/write-str (response metadata)))}))
 
 
 ; handle-delete-book <- delete-book
+(defn handle-delete-book [req]
+  (let [db (:clojure-rest-mongodb/db req)
+        categories (get-in req [:params "categories"])
+        metadata (delete-book db categories)]
+    {:body  (list (json/write-str (response metadata)))}))
+
 
 

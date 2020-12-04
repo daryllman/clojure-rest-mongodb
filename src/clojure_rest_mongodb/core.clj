@@ -2,10 +2,8 @@
   (:require ;[clojure-rest-mongodb.metadata.model :as reviews]
    [clojure-rest-mongodb.metadata.handler :refer [handle-metadatas
                                                   handle-get-book
-                                                          ;;  handle-create-review
-                                                          ;;  handle-reviews
-                                                          ;;  handle-delete-review
-                                                  ]])
+                                                  handle-create-book
+                                                  handle-delete-book]])
   (:require [ring.adapter.jetty :as jetty]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.params :refer [wrap-params]]
@@ -75,10 +73,8 @@
 
   (POST "/api/get_metadatas" [] handle-metadatas)
   (POST "/api/get_metadata" [] handle-get-book)
-  ; (GET "/api/all_reviews" [] handle-all-reviews) ; this api will not be used - just to quickly display all reviews (if db is set up correctly)
-  ; (POST "/api/get_reviews" [] handle-reviews) ; Get all review of a particular book
-  ; (POST "/api/create_review" [] handle-create-review) ; Add a review to a particular book
-  ; (POST "/api/delete_review" [] handle-delete-review) ; Remove a review to a particular book - requires asin, reviewerID, unixReviewTime
+  (POST "/api/create_book" [] handle-create-book)
+  (POST "/api/delete_book" [] handle-delete-book)
 
   (not-found "Page not found"))
 
