@@ -6,7 +6,7 @@
             [monger.collection :as mc])
   ;(:import [com.mongodb MongoOptions ServerAddress])
   )
-
+;___________________________________________________________________________________
 ; Read metadatas - To get metadata of books (with specified limit) db.metadata.find().skip(5).limit(5)
 ; e.g. db.metadata.find ().skip (5).limit (5)
 (defn read-metadatas [db skipNum limitNum category]
@@ -22,12 +22,14 @@
                                  {"$skip" skipNum}
                                  {"$limit" limitNum}]
                   :cursor {})))
-
+;___________________________________________________________________________________
 ; Read metadata of a book
 (defn read-book [db asin]
-  (#(dissoc % :_id)  (nth (with-collection db "metadata"
-                            (find {:asin "B000FA5ZEG"})) 0)))
-
+  (mc/aggregate db "metadata" [{"$match" {:asin asin}}
+                               {"$project" {:_id 0}}
+                               {"$unwind" {:path "$categories"}}]
+                :cursor {}))
+;___________________________________________________________________________________
 ; Create a book
 (defn create-book [db asin]
   (#(dissoc % :_id)  (nth (with-collection db "metadata"
@@ -37,6 +39,7 @@
 ;; (defn delete-book [db asin]
 ;;   (#(dissoc % :_id)  (nth (with-collection db "metadata"
 ;;                             (find {:asin asin})) 0)))
+;___________________________________________________________________________________
 (defn delete-book [db categories]
   (mc/aggregate db "metadata" [{"$project" {:_id 0}}
                                {"$unwind" {:path "$categories"}}
@@ -46,8 +49,7 @@
                                {"$skip" 5}
                                {"$limit" 5}]
                 :cursor {}))
-
-
+;___________________________________________________________________________________
 (defn delete-book [db categories]
   (if (some? categories)
     (mc/aggregate db "metadata" [{"$project" {:_id 0}}
@@ -66,7 +68,7 @@
                                  {"$skip" 5}
                                  {"$limit" 5}]
                   :cursor {})))
-
+;___________________________________________________________________________________
 
 
 ;;;; Archive of past work
