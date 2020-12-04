@@ -1,4 +1,5 @@
 (ns clojure-rest-mongodb.metadata.model
+  (:import org.bson.types.ObjectId)
   (:refer-clojure :exclude [sort find])
 
   (:require [monger.core :as mg]
@@ -31,9 +32,24 @@
                 :cursor {}))
 ;___________________________________________________________________________________
 ; Create a book
-(defn create-book [db asin]
-  (#(dissoc % :_id)  (nth (with-collection db "metadata"
-                            (find {:asin "B000FA5ZEG"})) 0)))
+(defn create-book [db title description price imUrl categories]
+
+  (let [oid (ObjectId.)]
+
+    (mc/insert db "metadata" {:_id oid :title title  :description description :price price :imUrl imUrl :categories (list categories)})  ; categories is a 2D array
+
+    (let [id (:id (nth (mc/aggregate db "metadata" [{"$sort" {:_id -1}}
+                                                    {"$limit" 1}
+                                                    {"$project" {:id {"$toString" "$_id"} :_id 0}}]
+                                     :cursor {}) 0))]
+      (mc/update-by-id db "metadata" oid {"$set" {:asin id}})
+      (println "++++++++++++++++++++ Created book with asin: " id)) ;{"$set" {:asin id}}
+    :cursor {})
+  (mc/aggregate db "metadata" [{"$sort" {:_id -1}}
+                               {"$limit" 1}
+                               {"$unwind" {:path "$categories"}}
+                               {"$project" {:_id 0}}]
+                :cursor {}))
 
 ; Delete a specified book
 ;; (defn delete-book [db asin]
@@ -49,25 +65,6 @@
                                {"$skip" 5}
                                {"$limit" 5}]
                 :cursor {}))
-;___________________________________________________________________________________
-(defn delete-book [db categories]
-  (if (some? categories)
-    (mc/aggregate db "metadata" [{"$project" {:_id 0}}
-                                 {"$unwind" {:path "$categories"}}
-                                    ;{"$match" {"$in" (list "Literature & Fiction")}}
-                               ;{"$match" {:categories (hash-map "$in" (list "Literature & Fiction"))}}
-                                 {"$match" {:categories {"$in" (list categories)}}}
-                                 {"$skip" 5}
-                                 {"$limit" 5}]
-                  :cursor {})
-    (mc/aggregate db "metadata" [{"$project" {:_id 0}}
-                                 {"$unwind" {:path "$categories"}}
-                                    ;{"$match" {"$in" (list "Literature & Fiction")}}
-                               ;{"$match" {:categories (hash-map "$in" (list "Literature & Fiction"))}}
-                                 {"$match" {:categories {"$in" (list "Books")}}}
-                                 {"$skip" 5}
-                                 {"$limit" 5}]
-                  :cursor {})))
 ;___________________________________________________________________________________
 
 
