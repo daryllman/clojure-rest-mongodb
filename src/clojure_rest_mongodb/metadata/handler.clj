@@ -3,7 +3,8 @@
    [clojure-rest-mongodb.metadata.model :refer [read-metadatas
                                                 read-book
                                                 create-book
-                                                delete-book]]
+                                                delete-book
+                                                related-images]]
    [ring.util.response :refer [response]]
    [clojure.data.json :as json])
   (:require [monger.core :as mg]
@@ -54,6 +55,14 @@
   (let [db (:clojure-rest-mongodb/db req)
         asin (get-in req [:params "asin"])
         metadata (delete-book db asin)]
+    {:body   (json/write-str (response metadata))}))
+
+; handle-related-images <- related-images
+(defn handle-related-images [req]
+  (let [db (:clojure-rest-mongodb/db req)
+        asin (get-in req [:params "asin"])
+        max (get-in req [:params "max"])
+        metadata (related-images db asin max)]
     {:body   (json/write-str (response metadata))}))
 
 

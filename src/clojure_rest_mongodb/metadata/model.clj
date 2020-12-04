@@ -56,7 +56,17 @@
   (mc/remove db "metadata" {:asin asin})
   (println "Removed booked with asin: " asin))
 ;___________________________________________________________________________________
+; Get Related Images of a specified book
+;; (defn related-images [db asin max]
+;;   (let [related (:related (read-book db asin))])
+;;   (mc/remove db "metadata" {:asin asin})
+;;   (println "Removed booked with asin: " asin))
+(defn related-images [db asin max]
+  (list 0))
 
+
+
+;___________________________________________________________________________________
 
 ;;;; Archive of past work
 

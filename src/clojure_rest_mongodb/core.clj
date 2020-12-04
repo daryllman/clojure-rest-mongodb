@@ -3,7 +3,8 @@
    [clojure-rest-mongodb.metadata.handler :refer [handle-metadatas
                                                   handle-get-book
                                                   handle-create-book
-                                                  handle-delete-book]])
+                                                  handle-delete-book
+                                                  handle-related-images]])
   (:require [ring.adapter.jetty :as jetty]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.params :refer [wrap-params]]
@@ -75,6 +76,7 @@
   (POST "/api/get_metadata" [] handle-get-book)
   (POST "/api/create_book" [] handle-create-book)
   (POST "/api/delete_book" [] handle-delete-book)
+  (POST "/api/related_images" [] handle-related-images)
 
   (not-found "Page not found"))
 
