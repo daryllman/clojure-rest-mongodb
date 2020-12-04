@@ -26,7 +26,7 @@
         limitNum (get-in req [:params "limit"])
         category (get-in req [:params "category"])
         metadatas (read-metadatas db skipNum limitNum category)]
-    {:body  (list (json/write-str (response metadatas)))}))
+    {:body   (json/write-str (response metadatas))}))
 
 
 ; handle-get-book <- read-book
@@ -46,7 +46,7 @@
         imUrl (get-in req [:params "imUrl"])
         categories (get-in req [:params "categories"])
         metadata (create-book db title description price imUrl categories)]
-    {:body  (list (json/write-str (response metadata)))}))
+    {:body  (json/write-str (response metadata))}))
 
 
 ; handle-delete-book <- delete-book
@@ -54,7 +54,7 @@
   (let [db (:clojure-rest-mongodb/db req)
         asin (get-in req [:params "asin"])
         metadata (delete-book db asin)]
-    {:body  (list (json/write-str (response metadata)))}))
+    {:body   (json/write-str (response metadata))}))
 
 
 

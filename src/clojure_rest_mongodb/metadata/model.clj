@@ -26,10 +26,10 @@
 ;___________________________________________________________________________________
 ; Read metadata of a book
 (defn read-book [db asin]
-  (mc/aggregate db "metadata" [{"$match" {:asin asin}}
-                               {"$project" {:_id 0}}
-                               {"$unwind" {:path "$categories"}}]
-                :cursor {}))
+  (nth (mc/aggregate db "metadata" [{"$match" {:asin asin}}
+                                    {"$project" {:_id 0}}
+                                    {"$unwind" {:path "$categories"}}]
+                     :cursor {}) 0))
 ;___________________________________________________________________________________
 ; Create a book
 (defn create-book [db title description price imUrl categories]
@@ -45,11 +45,11 @@
       (mc/update-by-id db "metadata" oid {"$set" {:asin id}})
       (println "Created book with asin: " id)) ;{"$set" {:asin id}}
     :cursor {})
-  (mc/aggregate db "metadata" [{"$sort" {:_id -1}}
-                               {"$limit" 1}
-                               {"$unwind" {:path "$categories"}}
-                               {"$project" {:_id 0}}]
-                :cursor {}))
+  (nth (mc/aggregate db "metadata" [{"$sort" {:_id -1}}
+                                    {"$limit" 1}
+                                    {"$unwind" {:path "$categories"}}
+                                    {"$project" {:_id 0}}]
+                     :cursor {}) 0))
 ;___________________________________________________________________________________
 ; Delete a specified book
 (defn delete-book [db asin]
