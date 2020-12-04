@@ -52,8 +52,8 @@
 ; handle-delete-book <- delete-book
 (defn handle-delete-book [req]
   (let [db (:clojure-rest-mongodb/db req)
-        categories (get-in req [:params "categories"])
-        metadata (delete-book db categories)]
+        asin (get-in req [:params "asin"])
+        metadata (delete-book db asin)]
     {:body  (list (json/write-str (response metadata)))}))
 
 

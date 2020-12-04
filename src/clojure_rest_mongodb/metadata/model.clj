@@ -43,28 +43,18 @@
                                                     {"$project" {:id {"$toString" "$_id"} :_id 0}}]
                                      :cursor {}) 0))]
       (mc/update-by-id db "metadata" oid {"$set" {:asin id}})
-      (println "++++++++++++++++++++ Created book with asin: " id)) ;{"$set" {:asin id}}
+      (println "Created book with asin: " id)) ;{"$set" {:asin id}}
     :cursor {})
   (mc/aggregate db "metadata" [{"$sort" {:_id -1}}
                                {"$limit" 1}
                                {"$unwind" {:path "$categories"}}
                                {"$project" {:_id 0}}]
                 :cursor {}))
-
-; Delete a specified book
-;; (defn delete-book [db asin]
-;;   (#(dissoc % :_id)  (nth (with-collection db "metadata"
-;;                             (find {:asin asin})) 0)))
 ;___________________________________________________________________________________
-(defn delete-book [db categories]
-  (mc/aggregate db "metadata" [{"$project" {:_id 0}}
-                               {"$unwind" {:path "$categories"}}
-                                    ;{"$match" {"$in" (list "Literature & Fiction")}}
-                               ;{"$match" {:categories (hash-map "$in" (list "Literature & Fiction"))}}
-                               {"$match" {:categories {"$in" (list categories)}}}
-                               {"$skip" 5}
-                               {"$limit" 5}]
-                :cursor {}))
+; Delete a specified book
+(defn delete-book [db asin]
+  (mc/remove db "metadata" {:asin asin})
+  (println "Removed booked with asin: " asin))
 ;___________________________________________________________________________________
 
 
