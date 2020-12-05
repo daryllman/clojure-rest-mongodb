@@ -11,18 +11,20 @@ GET {{hostname}}:{{port}} HTTP/1.1
 // Skip: skip to which document count (multipled of limit), Limit: return how many books
 // note under the hood it does this: db.metadata.find().skip(5).limit(5)
 POST {{hostname}}:{{port}}/api/get_metadatas HTTP/1.1
+
 content-type: application/json
 {
     "skip": 5,
-    "limit" 5
+    "limit": 5
 }
 
 ###
 // READ - To get metadata of a particular book
-POST {{hostname}}:{{port}}/api/get_metadatas HTTP/1.1
+POST {{hostname}}:{{port}}/api/get_metadata HTTP/1.1
+
 content-type: application/json
 {
-    "asin": "B000F83SZQ",
+    "asin": "B000F83SZQ"
 }
 
 
@@ -31,7 +33,6 @@ content-type: application/json
 POST {{hostname}}:{{port}}/api/add_book HTTP/1.1
 content-type: application/json
 {
-    "asin": "B0001234ZZ",
     "title": "Black Book",
     "description": "This is description of this item",
     "price": "9.9",
@@ -39,7 +40,7 @@ content-type: application/json
     "related": {"also_bought":[], "buy_after_viewing":[]},
     "categories": [['Books', 'Literature & Fiction']],
 }
-###
+
 ###
 // DELETE - remove a book
 POST {{hostname}}:{{port}}/api/delete_book HTTP/1.1

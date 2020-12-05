@@ -1,32 +1,33 @@
-# clojure-rest-mongodb
+# Clojure Rest MondoDB application
 
-FIXME: description
+Clojure App to serve a MongoDB database through RESTful APIs.
 
-## Installation
+## Clojure libraries used
 
-Download from http://example.com/FIXME.
+- [Ring](https://github.com/ring-clojure/ring) - HTTP Webserver
+
+```
+[ring "1.8.2"]
+```
+
+- [Compojure](https://github.com/weavejester/compojure) - Handle RESTful routing for Ring - Handles URL path, and method switching
+
+```
+[compojure "1.6.2"]
+```
+
+- [Clojure Data](https://github.com/clojure/data.json) - Clojure's JSON library - convert data types - to & from JSON
+
+```
+[org.clojure/data.json "1.0.0"]
+```
 
 ## Usage
 
-FIXME: explanation
-
-    $ java -jar clojure-rest-mongodb-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+- Download the [data](https://istd50043.github.io/project) (.csv to be loaded into a mondodb db) and save under /resources folder (not in use currently - to be automated)
+- Add the library dependencies into `project.clj` file - should already be there
+- `lein run 8000` to run at port 8000 (or other specified port)
+- Test the REST APIs - the sample api calls are in /api-calls folder
 
 ## License
 
