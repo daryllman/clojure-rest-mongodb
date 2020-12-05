@@ -15,10 +15,12 @@
     (mc/aggregate db "metadata" [{"$project" {:_id 0}}
                                  {"$unwind" {:path "$categories"}}
                                  {"$match" {:categories {"$in" (list category)}}}
+                                 {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                  {"$skip" skipNum}
                                  {"$limit" limitNum}]
                   :cursor {})
     (mc/aggregate db "metadata" [{"$project" {:_id 0}}
+                                 {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                  {"$skip" skipNum}
                                  {"$limit" limitNum}
                                  ;{"$unwind" {:path "$categories"}}
