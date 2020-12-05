@@ -29,7 +29,8 @@
 ;___________________________________________________________________________________
 ; Read metadata of a book
 (defn read-book [db asin]
-  (nth (mc/aggregate db "metadata" [{"$match" {:asin asin}}
+  (nth (mc/aggregate db "metadata" [{"$match" {:title {"$not" {"$eq" Double/NaN}}}}
+                                    {"$match" {:asin asin}}
                                     {"$project" {:_id 0}}
                                     {"$unwind" {:path "$categories"}}]
                      :cursor {}) 0))
