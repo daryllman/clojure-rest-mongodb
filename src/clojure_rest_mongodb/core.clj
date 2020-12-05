@@ -31,41 +31,34 @@
 
 
 (defn root [req]
-  ;; {:body "
-  ;;         <h1>Available endpoints (kindle book metadata) - MongoDB</h1>
-  ;;         <p>
-  ;;         <b>/api/all_reviews:</b>
-  ;;         (this api will not be used) To retrieve all the available reviews from database
-  ;;         </p>
+  {:body "
+          <h1>Available endpoints (kindle book metadata) - MongoDB</h1>
+          <p>
+          <b>/api/get_metadatas:</b>
+          READ - to get metadata of books (with specified limit)
+          </p>
 
-  ;;         <p>
-  ;;         <b>/api/get_reviews:</b>
-  ;;         Get all reviews of a particular book
-  ;;         </p>
+          <p>
+          <b>/api/get_metadata:</b>
+          READ - to get metadata of a specific book
+          </p>
 
-  ;;         <p>
-  ;;         <b>/api/create_review:</b>
-  ;;         Add a review to a particular book - requires asin, helpful overall, reviewText, reviewTime, reviewerID, reviewerName, summary, unixReviewTime
-  ;;         </p>
+          <p>
+          <b>/api/create_book:</b>
+          CREATE - add a book (metadata)          
+          </p>
 
-  ;;         <p>
-  ;;         <b>/api/delete_review:</b>
-  ;;         Remove a review to a particular book - requires asin, reviewerID, unixReviewTime
-  ;;         </p>
-  ;;         <hr/>
-  ;;         <h2>Table Model:</h2>
-  ;;         <p>asin char(10)</p>
-  ;;         <p>helpful varchar(10) DEFAULT NULL</p>
-  ;;         <p>overall integer(1) DEFAULT NULL</p>
-  ;;         <p>reviewText text(1000)</p>
-  ;;         <p>reviewTime varchar(11)</p>
-  ;;         <p>reviewerID varchar(14)</p>
-  ;;         <p>reviewerName varchar(64)</p>
-  ;;         <p>summary varchar(255) DEFAULT NULL</p>
-  ;;         <p>unixReviewTime integer(10)</p>
-  ;;         <p>PRIMARY KEY(asin, reviewerID, unixReviewTime)</p>
-  ;;         "}
-  {:body (list (json/write-str (response (dissoc (nth (mc/find-maps db "metadata" {:asin "B000FA5ZEG"}) 0) :_id))))})
+          <p>
+          <b>/api/delete_book:</b>
+          DELETE - remove a book
+          </p>
+
+          <p>
+          <b>/api/related_images:</b>
+          READ - get the image urls of related images
+          </p>
+
+          "})
 
 ; REST routes
 (defroutes routes
