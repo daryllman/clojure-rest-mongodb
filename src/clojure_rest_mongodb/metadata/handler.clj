@@ -62,8 +62,8 @@
   (let [db (:clojure-rest-mongodb/db req)
         asin (get-in req [:params "asin"])
         max (get-in req [:params "max"])
-        metadata (related-images db asin max)]
-    {:body   (json/write-str (response metadata))}))
+        imagesList (related-images db asin max)]
+    {:body   (json/write-str (response imagesList))}))
 
 
 

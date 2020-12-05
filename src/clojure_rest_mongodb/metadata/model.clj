@@ -58,11 +58,13 @@
 ;___________________________________________________________________________________
 ; Get Related Images of a specified book
 (defn related-images [db asin max]
-  (let [related (:related (read-book db asin))])
-  (mc/remove db "metadata" {:asin asin})
-  (println "Removed booked with asin: " asin))
-;; (defn related-images [db asin max]
-;;   (list 0))
+  (println "Returning related images of asin: " asin)
+  (:images (nth (mc/aggregate db "metadata" [{"$match" {:asin asin}}
+                                             {"$project" {:related {"$concatArrays" (list "$related.also_viewed" "$related.buy_after_viewing")} :_id 0}}
+                                             {"$project" {:related {"$slice" (list "$related" 0 (+ max 1))}}}
+                                             {"$lookup" {:from "metadata" :localField "related" :foreignField "asin" :as "images"}}
+                                             {"$project" {:images "$images.imUrl"}}]
+                              :cursor {}) 0)))
 
 
 
