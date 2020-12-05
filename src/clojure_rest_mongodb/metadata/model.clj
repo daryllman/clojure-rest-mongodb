@@ -13,7 +13,8 @@
 (defn read-metadatas [db skipNum limitNum category]
   (if (some? category)
     (mc/aggregate db "metadata" [{"$project" {:_id 0}}
-                                 {"$unwind" {:path "$categories"}}
+                                 ;{"$unwind" {:path "$categories"}}
+                                 {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
                                  {"$match" {:categories {"$in" (list category)}}}
                                  {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                  {"$skip" skipNum}
@@ -65,14 +66,15 @@
   (println "Returning related images of asin: " asin)
   (if (some? max)
     (nth (mc/aggregate db "metadata" [{"$match" {:asin asin}}
-                                      {"$project" {:related {"$concatArrays" (list "$related.also_viewed" "$related.buy_after_viewing")} :_id 0}}
+                                      ;{"$project" {:related {"$concatArrays" (list "$related.also_viewed" "$related.buy_after_viewing")} :_id 0}}
+                                      {"$project" {:related {"$concatArrays" (list {"$ifNull" (list "$related.also_viewed" [])} {"$ifNull" (list "$related.buy_after_viewing" [])} {"$ifNull" (list "$related.also_bought" [])})} :_id 0}}
                                       {"$project" {:related {"$slice" (list "$related" 0 (+ max 1))}}}
                                       {"$lookup" {:from "metadata" :localField "related" :foreignField "asin" :as "images"}}
                                                ;{"$project" {:images "$images.imUrl"}}
                                       {"$project" {:imUrlList "$images.imUrl" :asinList "$images.asin"}}]
                        :cursor {}) 0)
     (nth (mc/aggregate db "metadata" [{"$match" {:asin asin}}
-                                      {"$project" {:related {"$concatArrays" (list "$related.also_viewed" "$related.buy_after_viewing")} :_id 0}}
+                                      {"$project" {:related {"$concatArrays" (list {"$ifNull" (list "$related.also_viewed" [])} {"$ifNull" (list "$related.buy_after_viewing" [])} {"$ifNull" (list "$related.also_bought" [])})} :_id 0}}
                                                ;{"$project" {:related {"$slice" (list "$related" 0 (+ max 1))}}}
                                       {"$lookup" {:from "metadata" :localField "related" :foreignField "asin" :as "images"}}
                                                ;{"$project" {:images "$images.imUrl"}}
