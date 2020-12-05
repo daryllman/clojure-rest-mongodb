@@ -63,7 +63,7 @@
         asin (get-in req [:params "asin"])
         max (get-in req [:params "max"])
         imagesList (related-images db asin max)]
-    {:body   (json/write-str (response imagesList))}))
+    {:body   (list (json/write-str (response imagesList)))}))
 
 
 

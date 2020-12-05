@@ -19,9 +19,10 @@
                                  {"$limit" limitNum}]
                   :cursor {})
     (mc/aggregate db "metadata" [{"$project" {:_id 0}}
-                                 {"$unwind" {:path "$categories"}}
                                  {"$skip" skipNum}
-                                 {"$limit" limitNum}]
+                                 {"$limit" limitNum}
+                                 ;{"$unwind" {:path "$categories"}}
+                                 {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}]
                   :cursor {})))
 ;___________________________________________________________________________________
 ; Read metadata of a book
@@ -60,18 +61,22 @@
 (defn related-images [db asin max]
   (println "Returning related images of asin: " asin)
   (if (some? max)
-    (:images (nth (mc/aggregate db "metadata" [{"$match" {:asin asin}}
-                                               {"$project" {:related {"$concatArrays" (list "$related.also_viewed" "$related.buy_after_viewing")} :_id 0}}
-                                               {"$project" {:related {"$slice" (list "$related" 0 (+ max 1))}}}
-                                               {"$lookup" {:from "metadata" :localField "related" :foreignField "asin" :as "images"}}
-                                               {"$project" {:images "$images.imUrl"}}]
-                                :cursor {}) 0))
-    (:images (nth (mc/aggregate db "metadata" [{"$match" {:asin asin}}
-                                               {"$project" {:related {"$concatArrays" (list "$related.also_viewed" "$related.buy_after_viewing")} :_id 0}}
+    (nth (mc/aggregate db "metadata" [{"$match" {:asin asin}}
+                                      {"$project" {:related {"$concatArrays" (list "$related.also_viewed" "$related.buy_after_viewing")} :_id 0}}
+                                      {"$project" {:related {"$slice" (list "$related" 0 (+ max 1))}}}
+                                      {"$lookup" {:from "metadata" :localField "related" :foreignField "asin" :as "images"}}
+                                               ;{"$project" {:images "$images.imUrl"}}
+                                      {"$project" {:imUrlList "$images.imUrl" :asinList "$images.asin"}}]
+                       :cursor {}) 0)
+    (nth (mc/aggregate db "metadata" [{"$match" {:asin asin}}
+                                      {"$project" {:related {"$concatArrays" (list "$related.also_viewed" "$related.buy_after_viewing")} :_id 0}}
                                                ;{"$project" {:related {"$slice" (list "$related" 0 (+ max 1))}}}
-                                               {"$lookup" {:from "metadata" :localField "related" :foreignField "asin" :as "images"}}
-                                               {"$project" {:images "$images.imUrl"}}]
-                                :cursor {}) 0))))
+                                      {"$lookup" {:from "metadata" :localField "related" :foreignField "asin" :as "images"}}
+                                               ;{"$project" {:images "$images.imUrl"}}
+                                      {"$project" {:imUrlList "$images.imUrl" :asinList "$images.asin"}}]
+                       :cursor {}) 0)))
+
+
 
 
 
