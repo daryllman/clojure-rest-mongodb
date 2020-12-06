@@ -26,7 +26,9 @@
         skipNum (get-in req [:params "skip"])
         limitNum (get-in req [:params "limit"])
         category (get-in req [:params "category"])
-        metadatas (read-metadatas db skipNum limitNum category)]
+        title (get-in req [:params "title"])
+        author (get-in req [:params "author"])
+        metadatas (read-metadatas db skipNum limitNum category title author)]
     {:body   (json/write-str (response metadatas))}))
 
 
