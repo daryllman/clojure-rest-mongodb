@@ -4,7 +4,9 @@
                                                   handle-get-book
                                                   handle-create-book
                                                   handle-delete-book
-                                                  handle-related-images]])
+                                                  handle-related-images
+                                                  handle-create-log
+                                                  handle-read-logs]])
   (:require [ring.adapter.jetty :as jetty]
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.params :refer [wrap-params]]
@@ -70,6 +72,9 @@
   (POST "/api/create_book" [] handle-create-book)
   (POST "/api/delete_book" [] handle-delete-book)
   (POST "/api/related_images" [] handle-related-images)
+
+  (POST "/api/create_log" [] handle-create-log)
+  (GET "/api/read_logs" [] handle-read-logs)
 
   (not-found "Page not found"))
 

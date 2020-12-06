@@ -4,7 +4,9 @@
                                                 read-book
                                                 create-book
                                                 delete-book
-                                                related-images]]
+                                                related-images
+                                                create-log
+                                                read-logs]]
    [ring.util.response :refer [response]]
    [clojure.data.json :as json])
   (:require [monger.core :as mg]
@@ -69,4 +71,18 @@
     {:body   (list (json/write-str (response imagesList)))}))
 
 
+; _______________________________________________________
+; handle-create-log <- create-log
+(defn handle-create-log [req]
+  (let [db (:clojure-rest-mongodb/db req)
+        timestamp (get-in req [:params "timestamp"])
+        type (get-in req [:params "timestamp"])
+        responseCode (get-in req [:params "timestamp"])
+        res (create-log db timestamp type responseCode)]
+    {:body   (json/write-str (response res))}))
 
+; handle-read-log <- read-logs
+(defn handle-read-logs [req]
+  (let [db (:clojure-rest-mongodb/db req)
+        logs (read-logs db)]
+    {:body   (list (json/write-str (response logs)))}))

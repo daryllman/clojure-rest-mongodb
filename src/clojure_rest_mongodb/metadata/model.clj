@@ -135,8 +135,20 @@
                                       {"$project" {:imUrlList "$images.imUrl" :asinList "$images.asin"}}]
                        :cursor {}) 0)))
 
+;___________________________________________________________________________________
+; Create Log
+(defn create-log [db timestamp type responseCode]
+  (println "Created log with timestamp(" timestamp "), " "type(" type "), " "response code(" responseCode ")")
+  (mc/insert db "log" {:timestamp timestamp :type type :code responseCode})
+  (mc/aggregate db "log" [{"$sort" {:_id -1}}
+                          {"$limit" 1}
+                          {"$project" {:_id 0}}]
+                :cursor {}))
 
-
+; Read Logs
+(defn read-logs [db]
+  (mc/aggregate db "log" [{"$project" {:_id 0}}]
+                :cursor {}))
 
 
 ;___________________________________________________________________________________
