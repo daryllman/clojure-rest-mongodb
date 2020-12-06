@@ -105,11 +105,11 @@
                      :cursor {}) 0))
 ;___________________________________________________________________________________
 ; Create a book
-(defn create-book [db title description price imUrl categories]
+(defn create-book [db title author description price imUrl categories]
 
   (let [oid (ObjectId.)]
 
-    (mc/insert db "metadata" {:_id oid :title title  :description description :price price :imUrl imUrl :categories (list categories)})  ; categories is a 2D array
+    (mc/insert db "metadata" {:_id oid :title title :author author :description description :price price :imUrl imUrl :categories (list categories)})  ; categories is a 2D array
 
     (let [id (:id (nth (mc/aggregate db "metadata" [{"$sort" {:_id -1}}
                                                     {"$limit" 1}
