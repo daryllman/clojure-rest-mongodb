@@ -77,7 +77,7 @@
   (let [db (:clojure-rest-mongodb/db req)
         timestamp (get-in req [:params "timestamp"])
         type (get-in req [:params "type"])
-        responseCode (get-in req [:params "responseCode"])
+        responseCode (get-in req [:params "code"])
         res (create-log db timestamp type responseCode)]
     {:body   (json/write-str (response res))}))
 
