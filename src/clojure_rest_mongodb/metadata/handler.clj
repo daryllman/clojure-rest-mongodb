@@ -76,8 +76,8 @@
 (defn handle-create-log [req]
   (let [db (:clojure-rest-mongodb/db req)
         timestamp (get-in req [:params "timestamp"])
-        type (get-in req [:params "timestamp"])
-        responseCode (get-in req [:params "timestamp"])
+        type (get-in req [:params "type"])
+        responseCode (get-in req [:params "responseCode"])
         res (create-log db timestamp type responseCode)]
     {:body   (json/write-str (response res))}))
 
