@@ -12,89 +12,75 @@
 ; Read metadatas - To get metadata of books (with specified limit) db.metadata.find().skip(5).limit(5)
 ; e.g. db.metadata.find ().skip (5).limit (5)
 (defn read-metadatas [db skipNum limitNum category title author]
-  (if (some? category)
-    (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
+  (let [metadatas (cond
+                    (and (s/blank? category) (s/blank? title) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; default - max
+                                                                                                              {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
+                                                                                                              {"$skip" skipNum}
+                                                                                                              {"$limit" limitNum}
                                  ;{"$unwind" {:path "$categories"}}
-                                 {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                 {"$match" {:categories {"$in" (list category)}}}
-                                 {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
-                                 {"$skip" skipNum}
-                                 {"$limit" limitNum}]
-                  :cursor {})
-    (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; default - max
-                                 {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
-                                 {"$skip" skipNum}
-                                 {"$limit" limitNum}
+                                                                                                              {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}]
+                                                                                               :cursor {})
+                    (and (not (s/blank? category)) (s/blank? title) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
                                  ;{"$unwind" {:path "$categories"}}
-                                 {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}]
-                  :cursor {}))
-  (cond
-    (and (s/blank? category) (s/blank? title) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; default - max
-                                                                                              {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
-                                                                                              {"$skip" skipNum}
-                                                                                              {"$limit" limitNum}
+                                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
+                                                                                                                    {"$match" {:categories {"$in" (list category)}}}
+                                                                                                                    {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
+                                                                                                                    {"$skip" skipNum}
+                                                                                                                    {"$limit" limitNum}]
+                                                                                                     :cursor {})
+                    (and (s/blank? category) (not (s/blank? title)) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
                                  ;{"$unwind" {:path "$categories"}}
-                                                                                              {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}]
-                                                                               :cursor {})
-    (and (not (s/blank? category)) (s/blank? title) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
-                                 ;{"$unwind" {:path "$categories"}}
-                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                    {"$match" {:categories {"$in" (list category)}}}
-                                                                                                    {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
-                                                                                                    {"$skip" skipNum}
-                                                                                                    {"$limit" limitNum}]
-                                                                                     :cursor {})
-    (and (s/blank? category) (not (s/blank? title)) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
-                                 ;{"$unwind" {:path "$categories"}}
-                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
+                                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
 
-                                                                                                    {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
-                                                                                                    {"$match" {:title title}}
+                                                                                                                    {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
+                                                                                                                    {"$match" {:title title}}
                                                                                                     ;{"$skip" skipNum}
                                                                                                     ;{"$limit" limitNum}
-                                                                                                    ]
-                                                                                     :cursor {})
-    (and (s/blank? category) (s/blank? title) (not (s/blank? author))) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
+                                                                                                                    ]
+                                                                                                     :cursor {})
+                    (and (s/blank? category) (s/blank? title) (not (s/blank? author))) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
                                  ;{"$unwind" {:path "$categories"}}
-                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
+                                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
 
-                                                                                                    {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
-                                                                                                    {"$match" {:author author}}
+                                                                                                                    {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
+                                                                                                                    {"$match" {:author author}}
                                                                                                     ;{"$skip" skipNum}
                                                                                                     ;{"$limit" limitNum}
-                                                                                                    ]
-                                                                                     :cursor {})
-    (and (not (s/blank? category)) (not (s/blank? title)) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
+                                                                                                                    ]
+                                                                                                     :cursor {})
+                    (and (not (s/blank? category)) (not (s/blank? title)) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
                                  ;{"$unwind" {:path "$categories"}}
-                                                                                                          {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                          {"$match" {:categories {"$in" (list category)}}}
-                                                                                                          {"$match" {:title title}}
-                                                                                                          {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
+                                                                                                                          {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
+                                                                                                                          {"$match" {:categories {"$in" (list category)}}}
+                                                                                                                          {"$match" {:title title}}
+                                                                                                                          {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                                                                                           ;{"$skip" skipNum}
                                                                                                           ;{"$limit" limitNum}
-                                                                                                          ]
-                                                                                           :cursor {})
-    (and (not (s/blank? category)) (s/blank? title) (not (s/blank? author))) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
+                                                                                                                          ]
+                                                                                                           :cursor {})
+                    (and (not (s/blank? category)) (s/blank? title) (not (s/blank? author))) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
                                  ;{"$unwind" {:path "$categories"}}
-                                                                                                          {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                          {"$match" {:categories {"$in" (list category)}}}
-                                                                                                          {"$match" {:author author}}
-                                                                                                          {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
+                                                                                                                          {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
+                                                                                                                          {"$match" {:categories {"$in" (list category)}}}
+                                                                                                                          {"$match" {:author author}}
+                                                                                                                          {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                                                                                           ;{"$skip" skipNum}
                                                                                                           ;{"$limit" limitNum}
-                                                                                                          ]
-                                                                                           :cursor {})
-    (and (not (s/blank? category)) (not (s/blank? title)) (not (s/blank? author))) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
+                                                                                                                          ]
+                                                                                                           :cursor {})
+                    (and (not (s/blank? category)) (not (s/blank? title)) (not (s/blank? author))) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
                                  ;{"$unwind" {:path "$categories"}}
-                                                                                                                {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                                {"$match" {:categories {"$in" (list category)}}}
-                                                                                                                {"$match" {:title title}}
-                                                                                                                {"$match" {:author author}}
-                                                                                                                {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
+                                                                                                                                {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
+                                                                                                                                {"$match" {:categories {"$in" (list category)}}}
+                                                                                                                                {"$match" {:title title}}
+                                                                                                                                {"$match" {:author author}}
+                                                                                                                                {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                                                                                                 ;{"$skip" skipNum}
                                                                                                                 ;{"$limit" limitNum}
-                                                                                                                ]
-                                                                                                 :cursor {})))
+                                                                                                                                ]
+                                                                                                                 :cursor {}))
+        asins (map #(:asin %) metadatas)]
+    (hash-map :asinList asins :bookList metadatas)))
 ;___________________________________________________________________________________
 ; Read metadata of a book
 (defn read-book [db asin]
