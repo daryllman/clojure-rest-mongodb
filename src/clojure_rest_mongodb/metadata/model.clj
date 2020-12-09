@@ -17,39 +17,30 @@
                                                                                                               {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                                                                                               {"$skip" skipNum}
                                                                                                               {"$limit" limitNum}
-                                                                                                              {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                              {"$addFields" {:avgReview (float (/ (rand-int 11) 2))}}]
+                                                                                                              {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}]
                                                                                                :cursor {})
                     (and (not (s/blank? category)) (s/blank? title) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
-                                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                                    {"$addFields" {:avgReview (float (/ (rand-int 11) 2))}}
-                                                                                                                    {"$match" {:categories {"$in" (list category)}}}
+                                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}                                                                                                                    {"$match" {:categories {"$in" (list category)}}}
                                                                                                                     {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                                                                                                     {"$skip" skipNum}
                                                                                                                     {"$limit" limitNum}]
                                                                                                      :cursor {})
                     (and (s/blank? category) (not (s/blank? title)) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
-                                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                                    {"$addFields" {:avgReview (float (/ (rand-int 11) 2))}}
-                                                                                                                    {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
+                                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}                                                                                                                    {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                                                                                                     {"$match" {:title title}}
                                                                                                     ;{"$skip" skipNum}
                                                                                                     ;{"$limit" limitNum}
                                                                                                                     ]
                                                                                                      :cursor {})
                     (and (s/blank? category) (s/blank? title) (not (s/blank? author))) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
-                                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                                    {"$addFields" {:avgReview (float (/ (rand-int 11) 2))}}
-                                                                                                                    {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
+                                                                                                                    {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}                                                                                                                    {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                                                                                                     {"$match" {:author author}}
                                                                                                     ;{"$skip" skipNum}
                                                                                                     ;{"$limit" limitNum}
                                                                                                                     ]
                                                                                                      :cursor {})
                     (and (not (s/blank? category)) (not (s/blank? title)) (s/blank? author)) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
-                                                                                                                          {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                                          {"$addFields" {:avgReview (float (/ (rand-int 11) 2))}}
-                                                                                                                          {"$match" {:categories {"$in" (list category)}}}
+                                                                                                                          {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}                                                                                                                          {"$match" {:categories {"$in" (list category)}}}
                                                                                                                           {"$match" {:title title}}
                                                                                                                           {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                                                                                           ;{"$skip" skipNum}
@@ -57,9 +48,7 @@
                                                                                                                           ]
                                                                                                            :cursor {})
                     (and (not (s/blank? category)) (s/blank? title) (not (s/blank? author))) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
-                                                                                                                          {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                                          {"$addFields" {:avgReview (float (/ (rand-int 11) 2))}}
-                                                                                                                          {"$match" {:categories {"$in" (list category)}}}
+                                                                                                                          {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}                                                                                                                          {"$match" {:categories {"$in" (list category)}}}
                                                                                                                           {"$match" {:author author}}
                                                                                                                           {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
                                                                                                           ;{"$skip" skipNum}
@@ -67,9 +56,7 @@
                                                                                                                           ]
                                                                                                            :cursor {})
                     (and (not (s/blank? category)) (not (s/blank? title)) (not (s/blank? author))) (mc/aggregate db "metadata" [{"$project" {:_id 0}} ; with category
-                                                                                                                                {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}
-                                                                                                                                {"$addFields" {:avgReview (float (/ (rand-int 11) 2))}}
-                                                                                                                                {"$match" {:categories {"$in" (list category)}}}
+                                                                                                                                {"$addFields" {:categories {"$reduce" {:input "$categories" :initialValue (list) :in {"$concatArrays" (list "$$value" "$$this")}}}}}                                                                                                                                {"$match" {:categories {"$in" (list category)}}}
                                                                                                                                 {"$match" {:title title}}
                                                                                                                                 {"$match" {:author author}}
                                                                                                                                 {"$match" {:title {"$not" {"$eq" Double/NaN}}}}
@@ -77,8 +64,10 @@
                                                                                                                 ;{"$limit" limitNum}
                                                                                                                                 ]
                                                                                                                  :cursor {}))
-        asins (map #(:asin %) metadatas)]
-    (hash-map :asinList asins :bookList metadatas)))
+        asins (map #(:asin %) metadatas)
+        updated-metadatas (map #(assoc % :avgReview (float (/ (rand-int 11) 2))) metadatas)]
+
+    (hash-map :asinList asins :bookList updated-metadatas)))
 ;___________________________________________________________________________________
 ; Read metadata of a book
 (defn read-book [db asin]
